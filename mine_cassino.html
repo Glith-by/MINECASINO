@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MINECASINO — Mina de Sorte</title>
+<style>
+:root{
+  --bg:#070b0c;--panel:#0d1416;--panel2:#111b1e;--line:#234238;
+  --green:#28f07b;--green2:#0bb85a;--gold:#ffd45a;--red:#ff4f5e;
+  --text:#f2f7f5;--muted:#91a39d;--shadow:0 18px 60px #0009;
+}
+*{box-sizing:border-box} body{margin:0;background:
+radial-gradient(circle at 50% -10%,#164a34 0,#0a1714 25%,transparent 50%),
+linear-gradient(135deg,#050809,#091111 55%,#050807);color:var(--text);
+font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;min-height:100vh}
+button,input{font:inherit} button{cursor:pointer}
+svg{width:1em;height:1em;display:block}
+.top{height:74px;border-bottom:1px solid #1d5b43;background:#07100fdd;backdrop-filter:blur(14px);
+display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:sticky;top:0;z-index:20}
+.logo{display:flex;gap:11px;align-items:center;font-weight:950;letter-spacing:.8px;font-size:20px}
+.logo-mark{width:35px;height:35px;border:2px solid var(--green);border-radius:8px;display:grid;place-items:center;
+box-shadow:0 0 22px #28f07b55;color:var(--green);background:#0a2018}
+.balance{display:flex;align-items:center;gap:9px;border:1px solid #2d8e64;background:#0b1915;padding:9px 15px;border-radius:10px;
+box-shadow:inset 0 0 20px #0f402c55}
+.coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff1a0,#ffc52d 35%,#a76d00 100%);
+border:2px solid #ffe889;box-shadow:0 0 12px #ffc72c66;display:inline-grid;place-items:center;color:#765000;font-size:11px;font-weight:900}
+.nav{display:flex;gap:7px;padding:18px 5vw 4px;justify-content:center;flex-wrap:wrap}
+.nav button{border:1px solid transparent;background:transparent;color:#a9b8b3;padding:10px 16px;border-radius:9px;font-weight:800}
+.nav button:hover,.nav button.active{color:#07100c;background:var(--green);box-shadow:0 0 22px #28f07b44}
+main{max-width:1180px;margin:auto;padding:26px 20px 70px}.page{display:none}.page.active{display:block}
+.hero{text-align:center;padding:22px 0 20px}.eyebrow{color:var(--green);font-weight:900;letter-spacing:3px;font-size:12px}
+h1{font-size:clamp(32px,5vw,56px);margin:8px 0 5px;letter-spacing:-2px}
+.sub{color:var(--muted);margin:0 auto 18px;max-width:650px}.jackpot{color:var(--gold);font-weight:950;font-size:20px;text-shadow:0 0 18px #ffd45a44}
+.panel{background:linear-gradient(145deg,#0e1719dd,#0a1113dd);border:1px solid #28664f;border-radius:18px;box-shadow:var(--shadow),inset 0 0 45px #0b332555}
+.slot-panel{padding:28px;position:relative;overflow:hidden}
+.slot-panel:before{content:"";position:absolute;inset:-80px;background:radial-gradient(circle,#28f07b0e,transparent 55%);pointer-events:none}
+.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;max-width:760px;margin:12px auto 20px}
+.reel{height:190px;background:linear-gradient(180deg,#eaf1ee,#a9b5b1 48%,#dfe8e5);border:8px solid #26312f;border-radius:16px;
+box-shadow:inset 0 0 25px #0007,0 10px 30px #0008;display:grid;place-items:center;overflow:hidden;position:relative}
+.reel:after{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:#28f07b99;box-shadow:0 0 15px #28f07b}
+.symbol{font-size:82px;filter:drop-shadow(0 7px 4px #0007);transition:.15s}.spinning .symbol{animation:spin .12s linear infinite}
+@keyframes spin{to{transform:translateY(9px)}}
+.controls{display:flex;gap:12px;justify-content:center;align-items:end;flex-wrap:wrap}
+.field label{display:block;font-size:11px;color:#8da29a;font-weight:800;margin-bottom:6px;text-align:left}
+input{width:145px;background:#07100f;border:1px solid #315c4c;color:#fff;padding:13px 14px;border-radius:10px;outline:none}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px #28f07b18}
+.btn{border:0;border-radius:10px;padding:13px 20px;font-weight:950;transition:.15s}
+.btn:hover{transform:translateY(-2px)}.primary{background:linear-gradient(180deg,#3cff88,#13c961);color:#041109;box-shadow:0 8px 25px #18e96d33}
+.secondary{background:#13201d;border:1px solid #315e4e;color:#dce9e4}.danger{background:#3a1519;color:#ff9ba2;border:1px solid #6b292f}
+.status{text-align:center;min-height:30px;margin:17px 0 0;font-weight:800;color:#c8d5d1}.win{color:var(--gold);text-shadow:0 0 14px #ffd45a66}
+.paytable{max-width:760px;margin:24px auto 0;border-top:1px solid #234238;padding-top:18px}
+.payrow{display:flex;justify-content:space-between;padding:10px 13px;border-bottom:1px solid #182824;color:#bdcbc6}
+.payrow b{color:#fff}.payrow span:last-child{color:var(--gold);font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:linear-gradient(145deg,#111b1d,#0b1214);border:1px solid #27483d;border-radius:16px;padding:20px;box-shadow:0 12px 35px #0005}
+.card:hover{border-color:#2c9668;transform:translateY(-2px);transition:.18s}
+.card-icon{height:90px;display:grid;place-items:center;font-size:55px;margin-bottom:8px;background:radial-gradient(circle,#183b2c,transparent 65%)}
+.card h3{margin:7px 0 5px}.card p{color:#91a39d;font-size:14px;line-height:1.45;margin:0 0 16px}.price{color:var(--gold);font-weight:950}
+.mission{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin:12px 0;padding:16px;border:1px solid #234238;border-radius:12px;background:#0c1516}
+.progress{height:7px;background:#172522;border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#11c85f,#8cffb6);border-radius:inherit}
+.roulette{padding:25px;text-align:center}.wheel{width:min(330px,70vw);aspect-ratio:1;margin:15px auto 25px;border-radius:50%;
+background:conic-gradient(#d43c48 0 9.73%,#111 9.73% 19.46%,#29c96b 19.46% 21.62%,#111 21.62% 31.35%,#d43c48 31.35% 41.08%,#111 41.08% 50.81%,#d43c48 50.81% 60.54%,#111 60.54% 70.27%,#d43c48 70.27% 80%,#111 80% 89.73%,#d43c48 89.73% 100%);
+border:13px solid #26312f;box-shadow:0 0 0 4px #b89a45,0 15px 45px #0009;display:grid;place-items:center;transition:transform 2.7s cubic-bezier(.12,.8,.12,1)}
+.wheel-center{width:76px;height:76px;border-radius:50%;background:#101817;border:4px solid #b89a45;display:grid;place-items:center;font-size:25px}
+.betgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:720px;margin:auto}.betbox{padding:17px;border:1px solid #29453c;border-radius:12px;background:#0c1515}
+.betbox.red{box-shadow:inset 0 -3px #d43c48}.betbox.black{box-shadow:inset 0 -3px #555}.betbox.green{box-shadow:inset 0 -3px #29c96b}
+.small{font-size:12px;color:#8da29a}.big{font-size:27px;font-weight:950;margin:3px 0}
+.toast{position:fixed;right:20px;bottom:20px;background:#0e1c18;border:1px solid #2ca76f;padding:14px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:50;transform:translateY(120px);opacity:0;transition:.25s}.toast.show{transform:none;opacity:1}
+.empty{text-align:center;color:#82958e;padding:35px}.badge{display:inline-flex;padding:5px 8px;border-radius:99px;background:#163528;color:#70ffa9;font-size:11px;font-weight:900}
+footer{text-align:center;color:#52655e;font-size:12px;padding:15px}
+@media(max-width:650px){.top{padding:0 15px}.nav{padding-left:10px;padding-right:10px}.reel{height:130px}.symbol{font-size:58px}.slot-panel{padding:15px}.betgrid{grid-template-columns:1fr}.balance{font-size:13px}}
+
+/* ===== VISUAL ALIVE UPGRADE ===== */
+body{overflow-x:hidden;background:radial-gradient(ellipse at 50% -15%,#176344 0,#092116 25%,transparent 52%),radial-gradient(circle at 5% 45%,#0b4a2e44,transparent 28%),radial-gradient(circle at 95% 70%,#0a563544,transparent 30%),#050909}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;opacity:.25;background-image:linear-gradient(135deg,#fff 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(#fff,transparent);animation:bgMove 16s linear infinite}
+@keyframes bgMove{to{background-position:92px 92px}}
+.top{box-shadow:0 4px 35px #000b,0 1px 0 #35f98a55}
+.logo-mark{animation:logoPulse 2.2s ease-in-out infinite}@keyframes logoPulse{50%{box-shadow:0 0 32px #28f07b99,inset 0 0 18px #28f07b33}}
+.balance{animation:balPulse 2.8s ease-in-out infinite}@keyframes balPulse{50%{box-shadow:inset 0 0 30px #0f402c99,0 0 18px #28f07b33}}
+.hero{position:relative}.hero:before{content:"";position:absolute;left:50%;top:0;width:320px;height:110px;transform:translateX(-50%);background:#28f07b22;filter:blur(45px);z-index:-1}
+.eyebrow{animation:blink 2.5s ease-in-out infinite}@keyframes blink{50%{text-shadow:0 0 22px #28f07b}}
+h1{background:linear-gradient(#fff,#d6e4df 55%,#849b92);-webkit-background-clip:text;background-clip:text;color:transparent}
+.jackpot{animation:jack 1.8s ease-in-out infinite}@keyframes jack{50%{transform:scale(1.025);text-shadow:0 0 28px #ffd45a99}}
+.panel{backdrop-filter:blur(8px);box-shadow:var(--shadow),inset 0 0 60px #0b332577,0 0 35px #1bf27a0b}
+.panel:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,transparent 20%,#fff7 40%,transparent 60%);opacity:.05;transform:translateX(-120%);animation:sheen 6s ease-in-out infinite}@keyframes sheen{45%,100%{transform:translateX(120%)}}
+.reels{perspective:900px}.reel{transition:.25s;box-shadow:inset 0 0 35px #0008,0 15px 35px #0009,0 0 0 1px #fff4}.reel:hover{transform:translateY(-4px);box-shadow:inset 0 0 35px #0008,0 20px 45px #000b,0 0 25px #28f07b33}
+.symbol svg{width:90px;height:90px;filter:drop-shadow(0 7px 8px #0008) drop-shadow(0 0 14px #28f07b44)}
+.spinning .symbol svg{animation:slotSpin .1s linear infinite}@keyframes slotSpin{50%{transform:translateY(-12px);opacity:.55}}
+.btn{position:relative;overflow:hidden}.btn:after{content:"";position:absolute;top:0;bottom:0;width:35%;left:-50%;background:linear-gradient(90deg,transparent,#fff8,transparent);transform:skewX(-20deg);animation:btnshine 3.5s infinite}@keyframes btnshine{35%,100%{left:130%}}
+#spin{min-width:155px;animation:spinbtn 2s ease-in-out infinite}@keyframes spinbtn{50%{box-shadow:0 8px 35px #18e96d66,0 0 0 4px #28f07b0b}}
+.payrow{transition:.18s}.payrow:hover{background:#fff5;padding-left:20px;padding-right:20px}
+.card{position:relative;overflow:hidden;box-shadow:0 15px 45px #0007,inset 0 0 35px #0b2b2055;transition:.2s}.card:hover{transform:translateY(-5px);border-color:#2c9668;box-shadow:0 20px 50px #0009,0 0 20px #28f07b18}
+.card-icon svg{width:76px;height:76px;filter:drop-shadow(0 0 14px #28f07b55);transition:.2s}.card:hover .card-icon svg{transform:translateY(-6px) rotate(3deg) scale(1.07)}
+.betbox{transition:.2s}.betbox:hover{transform:translateY(-5px);border-color:#42d889;box-shadow:0 12px 30px #0008,0 0 18px #28f07b18}
+.mission{transition:.2s}.mission:hover{border-color:#2c9668;transform:translateX(4px)}
+.progress i{animation:prog 1.7s ease-in-out infinite}@keyframes prog{50%{box-shadow:0 0 13px #28f07b}}
+.alive-particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1}.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:#8affbb;box-shadow:0 0 10px #28f07b;opacity:0;animation:rise linear infinite}@keyframes rise{0%{transform:translateY(20px);opacity:0}15%{opacity:.7}80%{opacity:.3}100%{transform:translateY(-105vh) translateX(80px);opacity:0}}
+.livebar{max-width:1180px;margin:10px auto 0;padding:0 20px}.livebar-inner{height:34px;border:1px solid #1f4b3a;background:#07110fcc;border-radius:10px;display:flex;align-items:center;gap:10px;padding:0 12px;overflow:hidden;color:#91aaa0;font-size:11px}.live-dot{width:7px;height:7px;border-radius:50%;background:#28f07b;box-shadow:0 0 10px #28f07b;animation:live 1s infinite}@keyframes live{50%{opacity:.25}}.ticker{white-space:nowrap;animation:ticker 22s linear infinite}@keyframes ticker{to{transform:translateX(-60%)}}
+
+</style>
+</head>
+<body>
+
+<div class="alive-particles" id="particles"></div>
+<div class="livebar"><div class="livebar-inner"><span class="live-dot"></span><b>MINA AO VIVO</b><span>•</span><span class="ticker"> NOVOS MINÉRIOS DESCOBERTOS • JACKPOT ATUALIZADO • RODADAS VIRTUAIS • ITENS RAROS NA LOJA • SUBA DE NÍVEL • </span></div></div>
+<header class="top">
+  <div class="logo"><div class="logo-mark">⛏</div><span>MINECASINO</span></div>
+  <div class="balance"><span class="coin">M</span><b id="balance">10.000</b> moedas</div>
+</header>
+
+<nav class="nav">
+<button class="active" data-page="casino">🎰 Cassino</button>
+<button data-page="roulette">🎡 Roleta</button>
+<button data-page="shop">🛒 Loja</button>
+<button data-page="missions">🎯 Missões</button>
+<button data-page="inventory">🎒 Inventário</button>
+</nav>
+
+<main>
+<section id="casino" class="page active">
+  <div class="hero"><div class="eyebrow">MINER'S LUCK</div><h1>Mine Slots</h1><p class="sub">Gire os rolos, encontre combinações raras e acumule moedas virtuais.</p><div class="jackpot">💰 JACKPOT: 25.000 moedas</div></div>
+  <div class="panel slot-panel">
+    <div class="reels">
+      <div class="reel" id="r1"><div class="symbol">💎</div></div>
+      <div class="reel" id="r2"><div class="symbol">🟩</div></div>
+      <div class="reel" id="r3"><div class="symbol">⛏️</div></div>
+    </div>
+    <div class="controls">
+      <div class="field"><label>VALOR DA APOSTA</label><input id="bet" type="number" min="10" step="10" value="100"></div>
+      <button class="btn primary" id="spin">GIRAR 🎰</button>
+      <button class="btn secondary" id="max">MAX</button>
+    </div>
+    <div class="status" id="slotStatus">Boa sorte, minerador! ⛏️</div>
+    <div class="paytable">
+      <div class="payrow"><b>💎 💎 💎</b><span>x250</span></div>
+      <div class="payrow"><b>7️⃣ 7️⃣ 7️⃣</b><span>x80</span></div>
+      <div class="payrow"><b>🟩 🟩 🟩</b><span>x35</span></div>
+      <div class="payrow"><b>⛏️ ⛏️ ⛏️</b><span>x20</span></div>
+      <div class="payrow"><b>Qualquer par</b><span>x2</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="roulette" class="page">
+ <div class="hero"><div class="eyebrow">MINA ROULETTE</div><h1>Roleta da Mina</h1><p class="sub">Escolha vermelho, preto ou verde e faça sua rodada com moedas virtuais.</p></div>
+ <div class="panel roulette">
+  <div class="wheel" id="wheel"><div class="wheel-center">💎</div></div>
+  <div class="betgrid">
+   <div class="betbox red"><div class="big">🟥</div><b>Vermelho</b><div class="small">Pagamento 2x</div><button class="btn primary" onclick="roulette('red')">APOSTAR</button></div>
+   <div class="betbox black"><div class="big">⬛</div><b>Preto</b><div class="small">Pagamento 2x</div><button class="btn primary" onclick="roulette('black')">APOSTAR</button></div>
+   <div class="betbox green"><div class="big">🟩</div><b>Verde</b><div class="small">Pagamento 14x</div><button class="btn primary" onclick="roulette('green')">APOSTAR</button></div>
+  </div>
+  <div class="controls" style="margin-top:20px"><div class="field"><label>VALOR DA APOSTA</label><input id="rbet" type="number" min="10" step="10" value="100"></div></div>
+  <div class="status" id="rouletteStatus">A roda está esperando sua aposta.</div>
+ </div>
+</section>
+
+<section id="shop" class="page">
+ <div class="hero"><div class="eyebrow">MINER'S FORGE</div><h1>Loja da Mina</h1><p class="sub">Use suas moedas para desbloquear itens cosméticos e colecionáveis.</p></div>
+ <div class="grid">
+  <div class="card"><div class="card-icon">⛏️</div><h3>Picareta de Ferro</h3><p>Uma picareta simples para mineradores iniciantes.</p><div class="price">500 moedas</div><button class="btn primary" onclick="buy('Picareta de Ferro',500,'⛏️')">COMPRAR</button></div>
+  <div class="card"><div class="card-icon">💎</div><h3>Diamante Raro</h3><p>Um diamante extremamente raro encontrado nas profundezas.</p><div class="price">5.000 moedas</div><button class="btn primary" onclick="buy('Diamante Raro',5000,'💎')">COMPRAR</button></div>
+  <div class="card"><div class="card-icon">👑</div><h3>Coroa do Mineiro</h3><p>Mostra que você chegou longe na mina.</p><div class="price">10.000 moedas</div><button class="btn primary" onclick="buy('Coroa do Mineiro',10000,'👑')">COMPRAR</button></div>
+  <div class="card"><div class="card-icon">🟩</div><h3>Esmeralda Antiga</h3><p>Uma pedra verde lendária para sua coleção.</p><div class="price">7.500 moedas</div><button class="btn primary" onclick="buy('Esmeralda Antiga',7500,'🟩')">COMPRAR</button></div>
+ </div>
+</section>
+
+<section id="missions" class="page">
+ <div class="hero"><div class="eyebrow">PROGRESSÃO</div><h1>Missões</h1><p class="sub">Complete desafios para ganhar XP e moedas.</p></div>
+ <div class="panel" style="padding:18px">
+  <div style="display:flex;justify-content:space-between"><b>Nível <span id="level">1</span></b><b id="xpText">0 / 100 XP</b></div>
+  <div class="progress"><i id="xpBar" style="width:0%"></i></div>
+  <div class="mission"><div><b>🎰 Girar 5 vezes</b><div class="small">Progresso: <span id="mSpins">0</span> / 5</div></div><span class="badge">+150 🪙</span></div>
+  <div class="mission"><div><b>💰 Ganhar 1.000 moedas</b><div class="small">Ganhos totais: <span id="mWins">0</span></div></div><span class="badge">+100 XP</span></div>
+  <div class="mission"><div><b>💎 Conseguir um diamante</b><div class="small">Colete o item na Loja.</div></div><span class="badge">+300 XP</span></div>
+ </div>
+</section>
+
+<section id="inventory" class="page">
+ <div class="hero"><div class="eyebrow">COLEÇÃO</div><h1>Inventário</h1><p class="sub">Tudo que você desbloqueou fica guardado aqui.</p></div>
+ <div class="grid" id="inventoryGrid"><div class="empty">🎒 Seu inventário está vazio.<br>Visite a Loja para começar sua coleção.</div></div>
+</section>
+</main>
+<footer>MINECASINO • jogo local • moedas exclusivamente virtuais</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const symbols=[
+ {e:'💎',name:'Diamante',w:2},
+ {e:'7️⃣',name:'Sete',w:5},
+ {e:'🟩',name:'Esmeralda',w:9},
+ {e:'⛏️',name:'Picareta',w:12},
+ {e:'🪙',name:'Moeda',w:15},
+ {e:'🍀',name:'Sorte',w:16},
+ {e:'🧱',name:'Bloco',w:18},
+ {e:'💰',name:'Ouro',w:23}
+];
+let balance=10000,spins=0,wins=0,xp=0,level=1,inventory=[];
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.floor(n).toLocaleString('pt-BR');
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function setBalance(){ $('balance').textContent=fmt(balance); }
+function weighted(){let total=symbols.reduce((a,s)=>a+s.w,0),r=Math.random()*total;for(const s of symbols){r-=s.w;if(r<=0)return s}return symbols.at(-1)}
+function addXP(n){xp+=n;while(xp>=100){xp-=100;level++;toast('⬆️ Nível '+level+' alcançado!')} $('level').textContent=level;$('xpText').textContent=xp+' / 100 XP';$('xpBar').style.width=xp+'%'}
+function spin(){
+ if($('spin').disabled)return;
+ let bet=Math.floor(Number($('bet').value)||0);
+ if(bet<10){toast('A aposta mínima é 10 moedas.');return}
+ if(bet>balance){toast('Moedas insuficientes.');return}
+ balance-=bet;setBalance();spins++;$('mSpins').textContent=Math.min(spins,5);
+ const reels=[$('r1'),$('r2'),$('r3')];$('spin').disabled=true;
+ reels.forEach(r=>r.classList.add('spinning'));
+ let result=[];
+ let timer=setInterval(()=>reels.forEach(r=>r.querySelector('.symbol').textContent=weighted().e),90);
+ setTimeout(()=>{
+  clearInterval(timer);result=[weighted(),weighted(),weighted()];
+  result.forEach((s,i)=>reels[i].querySelector('.symbol').textContent=s.e);
+  reels.forEach(r=>r.classList.remove('spinning'));
+  let mult=0;
+  if(result.every(s=>s.name==='Diamante'))mult=250;
+  else if(result.every(s=>s.name==='Sete'))mult=80;
+  else if(result.every(s=>s.name==='Esmeralda'))mult=35;
+  else if(result.every(s=>s.name==='Picareta'))mult=20;
+  else if(result[0].name===result[1].name||result[1].name===result[2].name||result[0].name===result[2].name)mult=2;
+  if(mult){let prize=bet*mult;balance+=prize;wins+=prize;$('mWins').textContent=fmt(wins);addXP(mult>=20?25:10);$('slotStatus').innerHTML='<span class="win">✨ '+result.map(x=>x.e).join(' ')+' — GANHOU '+fmt(prize)+' moedas!</span>';toast('💰 '+fmt(prize)+' moedas!')}
+  else {$('slotStatus').textContent='😅 Nada dessa vez. A mina continua esperando...';addXP(2)}
+  setBalance();$('spin').disabled=false;
+ },1150);
+}
+$('spin').onclick=spin;$('max').onclick=()=>{$('bet').value=Math.max(10,Math.floor(balance/2/10)*10)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(b.dataset.page).classList.add('active')});
+function roulette(color){
+ let bet=Math.floor(Number($('rbet').value)||0);if(bet<10||bet>balance){toast(bet<10?'Aposta mínima: 10.':'Moedas insuficientes.');return}
+ balance-=bet;setBalance();
+ const wheel=$('wheel');wheel.style.transform='rotate('+(1440+Math.floor(Math.random()*1440))+'deg)';
+ setTimeout(()=>{
+  let roll=Math.random();let result=roll<0.46?'red':roll<0.92?'black':'green';
+  if(result===color){let mult=color==='green'?14:2;let prize=bet*mult;balance+=prize;wins+=prize;$('mWins').textContent=fmt(wins);addXP(color==='green'?35:12);$('rouletteStatus').innerHTML='<span class="win">🎉 '+result.toUpperCase()+'! Você ganhou '+fmt(prize)+' moedas.</span>';toast('🎉 Rodada vencedora!')}
+  else {$('rouletteStatus').textContent='A bolinha caiu em '+result.toUpperCase()+'. Boa próxima rodada!';addXP(2)}
+  setBalance()
+ },2750)
+}
+function buy(name,cost,icon){
+ if(inventory.some(x=>x.name===name)){toast('Você já possui este item.');return}
+ if(balance<cost){toast('Você ainda não tem moedas suficientes.');return}
+ balance-=cost;inventory.push({name,cost,icon});setBalance();renderInv();toast('✨ '+name+' desbloqueado!')
+ if(name==='Diamante Raro')addXP(30)
+}
+function renderInv(){
+ const g=$('inventoryGrid');if(!inventory.length){g.innerHTML='<div class="empty">🎒 Seu inventário está vazio.<br>Visite a Loja para começar sua coleção.</div>';return}
+ g.innerHTML=inventory.map(x=>`<div class="card"><div class="card-icon">${x.icon}</div><h3>${x.name}</h3><p>Item desbloqueado na Loja da Mina.</p><span class="badge">COLETADO</span></div>`).join('')
+}
+setBalance();renderInv();
+
+/* ===== SVG ART + AMBIENTE ===== */
+const ART={
+diamond:`<svg viewBox="0 0 100 100"><defs><linearGradient id="d1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8ffff"/><stop offset=".35" stop-color="#55e9ff"/><stop offset="1" stop-color="#176dd1"/></linearGradient></defs><path d="M16 35 31 15h38l15 20-35 50z" fill="url(#d1)" stroke="#eaffff" stroke-width="4"/><path d="M16 35h68M31 15l18 70 20-70M16 35l33 50 35-50" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width="3"/></svg>`,
+emerald:`<svg viewBox="0 0 100 100"><path d="M50 8 82 26l8 32-22 34H32L10 58l8-32z" fill="#24e77c" stroke="#c4ffda" stroke-width="4"/><path d="M50 8v84M18 26l32 66M82 26 50 92M10 58h80" fill="none" stroke="#087b43" stroke-width="4"/></svg>`,
+pickaxe:`<svg viewBox="0 0 100 100"><path d="M20 82 68 25" stroke="#9b6238" stroke-width="10" stroke-linecap="round"/><path d="M54 22c16-15 28-13 37-4-5 8-15 17-31 17z" fill="#bfc9c7" stroke="#fff" stroke-width="4"/></svg>`,
+coin:`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ffc928" stroke="#fff09a" stroke-width="5"/><circle cx="50" cy="50" r="31" fill="none" stroke="#a86f00" stroke-width="4"/><path d="M58 30c-5-4-17-3-20 4-5 12 25 8 24 22-1 10-18 13-27 5M50 25v50" fill="none" stroke="#8b5d00" stroke-width="6" stroke-linecap="round"/></svg>`,
+gold:`<svg viewBox="0 0 100 100"><path d="m18 67 12-38 31-13 22 20-12 37-31 12z" fill="#ffc928" stroke="#fff09a" stroke-width="4"/><path d="m30 29 31 23 22-16M30 29l-1 38 31 18M61 52l-1 33" fill="none" stroke="#a56e00" stroke-width="4"/></svg>`,
+crown:`<svg viewBox="0 0 100 100"><path d="m12 30 20 17 18-27 18 27 20-17-8 54H20z" fill="#ffd33f" stroke="#fff3a4" stroke-width="4"/><path d="M20 69h60" stroke="#b77700" stroke-width="5"/></svg>`,
+block:`<svg viewBox="0 0 100 100"><path d="M50 10 87 30v42L50 92 13 72V30z" fill="#7b4b2d" stroke="#d9a06e" stroke-width="4"/><path d="m13 30 37 20 37-20M50 50v42" fill="none" stroke="#4d2d1d" stroke-width="4"/><path d="M29 38 50 27l20 11-20 11z" fill="#9b623c"/></svg>`
+};
+const artFor=n=>ART[n]||ART.coin;
+
+/* troca os símbolos dos slots por arte vetorial embutida */
+const slotMap={Diamante:'diamond',Sete:'gold',Esmeralda:'emerald',Picareta:'pickaxe',Moeda:'coin',Sorte:'emerald',Bloco:'block',Ouro:'gold'};
+const oldWeighted=weighted;
+weighted=function(){return oldWeighted()};
+
+/* Inicializa os rolos com arte */
+document.querySelectorAll('.reel .symbol').forEach((el,i)=>el.innerHTML=artFor(['diamond','emerald','pickaxe'][i]));
+
+/* partículas */
+const pb=document.getElementById('particles');
+for(let i=0;i<38;i++){const p=document.createElement('i');p.className='particle';p.style.left=Math.random()*100+'%';p.style.bottom=(-5-Math.random()*25)+'px';p.style.animationDuration=(7+Math.random()*12)+'s';p.style.animationDelay=(-Math.random()*15)+'s';pb.appendChild(p)}
+
+/* reescreve os métodos de renderização para usar SVG */
+const originalSpin=spin;
+spin=function(){
+  if($('spin').disabled)return;
+  let bet=Math.floor(Number($('bet').value)||0);
+  if(bet<10){toast('A aposta mínima é 10 moedas.');return}
+  if(bet>balance){toast('Moedas insuficientes.');return}
+  balance-=bet;setBalance();spins++;$('mSpins').textContent=Math.min(spins,5);
+  const reels=[$('r1'),$('r2'),$('r3')];$('spin').disabled=true;
+  reels.forEach(r=>r.classList.add('spinning'));
+  let timer=setInterval(()=>reels.forEach(r=>r.querySelector('.symbol').innerHTML=artFor(weighted().e)),90);
+  setTimeout(()=>{
+    clearInterval(timer);let result=[weighted(),weighted(),weighted()];
+    result.forEach((s,i)=>reels[i].querySelector('.symbol').innerHTML=artFor(s.e));
+    reels.forEach(r=>r.classList.remove('spinning'));
+    let mult=0;
+    if(result.every(s=>s.name==='Diamante'))mult=250;
+    else if(result.every(s=>s.name==='Sete'))mult=80;
+    else if(result.every(s=>s.name==='Esmeralda'))mult=35;
+    else if(result.every(s=>s.name==='Picareta'))mult=20;
+    else if(result[0].name===result[1].name||result[1].name===result[2].name||result[0].name===result[2].name)mult=2;
+    if(mult){let prize=bet*mult;balance+=prize;wins+=prize;$('mWins').textContent=fmt(wins);addXP(mult>=20?25:10);$('slotStatus').innerHTML='<span class="win">✨ COMBINAÇÃO RARA — GANHOU '+fmt(prize)+' moedas!</span>';toast('💰 '+fmt(prize)+' moedas!')}
+    else{$('slotStatus').textContent='😅 A mina não entregou dessa vez...';addXP(2)}
+    setBalance();$('spin').disabled=false;
+  },1150);
+};
+
+/* loja com arte vetorial */
+const shopArt={ 'Picareta de Ferro':'pickaxe','Diamante Raro':'diamond','Coroa do Mineiro':'crown','Esmeralda Antiga':'emerald'};
+document.querySelectorAll('.card-icon').forEach(el=>{
+  const text=el.parentElement.querySelector('h3')?.textContent.trim();
+  if(shopArt[text])el.innerHTML=artFor(shopArt[text]);
+});
+
+/* inventário com arte vetorial */
+const oldRenderInv=renderInv;
+renderInv=function(){
+ const g=$('inventoryGrid');
+ if(!inventory.length){g.innerHTML='<div class="empty">🎒 Seu inventário está vazio.<br>Visite a Loja para começar sua coleção.</div>';return}
+ g.innerHTML=inventory.map(x=>`<div class="card"><div class="card-icon">${artFor(shopArt[x.name]||'coin')}</div><h3>${x.name}</h3><p>Item desbloqueado na Loja da Mina.</p><span class="badge">COLETADO</span></div>`).join('');
+};
+
+/* som leve nos cliques */
+let AC;
+function clickSound(f=460){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();let o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.type='sine';g.gain.value=.025;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.05)}catch(e){}}
+document.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>clickSound()));
+
+</script>
+</body>
+</html>
